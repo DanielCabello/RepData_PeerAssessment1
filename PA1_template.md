@@ -10,7 +10,8 @@ REPRODUCIBLE RESEARCH: assignment 1
 
 **1.1 Downloading data file from repository**
 
-```{r, echo=TRUE}
+
+```r
 #fileUrl <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 #download.file(fileUrl,destfile="./activity.zip")
 #unzip("activity.zip")
@@ -20,7 +21,8 @@ REPRODUCIBLE RESEARCH: assignment 1
 
 **1.2 Reading data as dataframe**
 
-```{r, echo=TRUE}
+
+```r
 activity <- read.table("activity.csv", header = TRUE, sep = ",", 
                        colClasses = c("numeric","Date","integer"))
 ```
@@ -33,21 +35,24 @@ activity <- read.table("activity.csv", header = TRUE, sep = ",",
 
 **2.1 Removing all observations with missing values (NA) in the variable 'steps'** 
 
-```{r, echo=TRUE}
+
+```r
 activityNA <- activity[!is.na(activity$steps),]
 ```
 
 
 **2.2 Calculating total number of steps per day**
 
-```{r, echo=TRUE}
+
+```r
 stepsDayRemove <-as.numeric(tapply(activityNA$steps, activityNA$date, sum))
 ```
 
 
 **2.3 Histogram of the total number of steps taken each day**
 
-```{r, echo=TRUE}
+
+```r
 hist(stepsDayRemove, col = "blue", breaks=30, 
      xlab="Steps per day", 
      ylab="Number of days", 
@@ -55,24 +60,29 @@ hist(stepsDayRemove, col = "blue", breaks=30,
      )
 ```
 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
+
 
 **2.4 Mean and median total number of steps taken per day**
 
-```{r, echo=TRUE}
+
+```r
 meanRemove <- mean(stepsDayRemove)
 medianRemove <- median(stepsDayRemove)
 ```
 
 Mean
 
-```{r, echo=FALSE}
-print(meanRemove)
+
+```
+## [1] 10766
 ```
 
 Median
 
-```{r, echo=FALSE}
-print(medianRemove)
+
+```
+## [1] 10765
 ```
    
 
@@ -82,7 +92,8 @@ print(medianRemove)
 
 **3.1 Calculating average number of steps taken per interval, averaged across  all days**
 
-```{r, echo=TRUE}
+
+```r
 ySteps<-(tapply(activityNA$steps, activityNA$interval, mean))
 xInterval<- as.numeric(rownames(ySteps))
 StepsInterval<-as.data.frame(cbind(xInterval,ySteps))
@@ -93,7 +104,8 @@ StepsInterval<-as.data.frame(cbind(xInterval,ySteps))
 
 **3.2 Time series plot of the average number of steps taken, averaged across all day, in 5-minute intervals** 
 
-```{r, echo=TRUE}
+
+```r
 plot(xInterval, ySteps, 
      type = "l",
      col = "blue", 
@@ -101,12 +113,20 @@ plot(xInterval, ySteps,
      ylab = "Average number of steps")
 ```
 
+![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10.png) 
+
 
 **3.3 5-minute interval that, on average, contains the maximum number of steps (averaged across all days)**
 
-```{r, echo=TRUE}
+
+```r
 intervalMax <- StepsInterval[StepsInterval$steps == max(StepsInterval$steps),]
 print(intervalMax)
+```
+
+```
+##     interval steps
+## 104      835 206.2
 ```
 
 
@@ -119,9 +139,14 @@ the strategy to impute the missing values is to use the average number of steps 
      
 **4.1 Total number of missing values (NA) in the dataset**
 
-```{r, echo=TRUE}
+
+```r
 na <- sum(is.na(activity$steps))
 print(na)
+```
+
+```
+## [1] 2304
 ```
     
 
@@ -129,7 +154,8 @@ print(na)
 
 
 
-```{r, echo=TRUE}
+
+```r
 activityFillNA <- activity 
 observations <- length(activityFillNA[,1])
 
@@ -140,19 +166,21 @@ for (i in 1:observations) {
         }
     }    
 rm(i)
-```  
+```
   
 
 **4.3 Calculating total number of steps per day**
 
-```{r, echo=TRUE}
+
+```r
 stepsDayFill <- as.numeric(tapply(activityFillNA$steps, activityFillNA$date, sum))
 ```
 
 
 **4.4 Histogram of the total number of steps taken each day**
 
-```{r, echo=TRUE,fig.height= 10}
+
+```r
 par(mfcol = c(2,1))
 
 hist(stepsDayFill, col = "blue", breaks=30, 
@@ -166,9 +194,12 @@ hist(stepsDayRemove, col = "blue", breaks=30,
      ylab="Number of days", 
      main="Total number of steps taken each day (imputing missing values)",
      )
+```
 
+![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15.png) 
+
+```r
 par(mfcol = c(1,1))
-
 ```
 
 As can be seen in the graphs above, the average number of steps is greater when the missing values are removed than when they are imputed with the average for that interval. Both graphs show a normal distribution, with mean and median almost identical.
@@ -176,7 +207,8 @@ As can be seen in the graphs above, the average number of steps is greater when 
 
 **4.5 Mean and median of the total number of steps taken per day**
 
-```{r, echo=TRUE}
+
+```r
 meanFill <- mean(stepsDayFill)
 medianFill <- median(stepsDayFill)
 ```
@@ -186,26 +218,35 @@ The values of mean and median are almost the same.
 
 Mean
 
-```{r, echo=FALSE}
-print(meanFill)
+
+```
+## [1] 10766
 ```
 
 Median
 
-```{r, echo=FALSE}
-print(medianFill)
+
+```
+## [1] 10762
 ```
    
    
 
 **4.6 Comparative table of the mean and median of the total number of steps taken per day: removing and filling missing values (NA)**
 
-```{r, echo=TRUE}
+
+```r
 comparativeTable <- data.frame(RemovingNA = c(meanRemove,medianRemove),
                     ImputingNA = c(meanFill, medianFill), 
                     row.names = c("mean","median"))
 
 print(comparativeTable)
+```
+
+```
+##        RemovingNA ImputingNA
+## mean        10766      10766
+## median      10765      10762
 ```
 
 The means are the same while medians differ little between them
@@ -218,7 +259,8 @@ The means are the same while medians differ little between them
 
 It has been used database with missing values imputed (activityFillNA), generated in the section 4.
 
-```{r, echo=TRUE}
+
+```r
 observations <- length(activityFillNA[,1])
 weekday <- NULL
 
@@ -237,7 +279,8 @@ rm(i, observations, weekday)
 
 **5.2 Calculating average number of steps taken grouped by weekday (weekday and weekend) and interval**
 
-```{r, echo=TRUE}
+
+```r
 activity2 <- tapply(activityFillNA$steps, paste(activityFillNA$weekday, activityFillNA$interval, sep=","), mean)
 activity2 <- as.data.frame(activity2, stringsAsFactors = FALSE)   
 
@@ -255,7 +298,8 @@ activity2$interval <- as.integer(activity2$interval)
 
 **5.3 Time series plot of the average number of steps taken, averaged across all day, in 5-minute intervals for weekday and weekend**
 
-```{r, echo=TRUE, fig.height= 9}
+
+```r
 library(ggplot2)
 qplot(interval, steps, data = activity2, 
         facets = weekday~., 
@@ -265,3 +309,5 @@ qplot(interval, steps, data = activity2,
         ylab = "Number of steps", 
         )
 ```
+
+![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-22.png) 
